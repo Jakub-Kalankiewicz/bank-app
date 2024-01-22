@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    depends_on:
+      - db
+    command: ["sh", "entrypoint.sh"]
+
+  db:
+    image: mysql
+    container_name: mysql-bank-db
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bankdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    expose:
+      - "3306"
+
+  nginx:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+
+volumes:
+  mysql-data:
